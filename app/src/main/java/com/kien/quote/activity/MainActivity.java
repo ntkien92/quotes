@@ -24,7 +24,7 @@ import com.kien.quote.R;
 import com.kien.quote.UtilsImage;
 import com.kien.quote.adapter.GridViewAdapter;
 import com.kien.quote.helper.ConnectionDirector;
-import com.kien.quote.model.GridItem;
+import com.kien.quote.model.Item;
 
 import java.util.ArrayList;
 
@@ -32,13 +32,17 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GridViewAdapter.OnClickImage, UtilsImage.getImage {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String RABBIT = "rabbits";
+    private static final String INSPIRATION = "inspirations";
+    private static final String HOME_PAGE = "http://quote-kien.herokuapp.com/v1";
+    private static final String URL = "http://quote-kien.herokuapp.com/v1/rabbits";
     private GridView mGridView;
     private ProgressBar mProgressBar;
     private GridViewAdapter mGridAdapter;
-    private String url = "http://secret-meadow-3565.herokuapp.com/articles.json";
     private UtilsImage allImage;
     private Boolean isConnectInternet;
     private ConnectionDirector connectionDirector;
+    public static String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,14 +50,14 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -63,26 +67,26 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        callGetJson();
+        url = HOME_PAGE+"/"+INSPIRATION;
+        callGetJson(url);
 
 
     }
 
-    private void loadDataToGridView(ArrayList<GridItem> gridItems) {
+    private void loadDataToGridView(ArrayList<Item> gridItems) {
         mGridView = (GridView) findViewById(R.id.gvImages);
         mGridAdapter = new GridViewAdapter(this, R.layout.grid_item_layout, gridItems, this);
         mGridView.setAdapter(mGridAdapter);
     }
 
-    public void callGetJson(){
+    public void callGetJson(String url){
         connectionDirector = new ConnectionDirector(this);
         isConnectInternet = connectionDirector.isConnectingToInternet();
 
         if (isConnectInternet) {
             allImage = new UtilsImage(this);
             allImage.setListener(this);
-            allImage.getJson();
+            allImage.getJson(url);
         }
         else showDialog(MainActivity.this, "Bạn chưa kết nối mạng", "Vui lòng kết nối mạng");
     }
@@ -145,14 +149,17 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camara) {
+            url = HOME_PAGE+"/"+RABBIT;
+            callGetJson(url);
         } else if (id == R.id.nav_gallery) {
+            url = HOME_PAGE+"/"+INSPIRATION;
+            callGetJson(url);
         } else if (id == R.id.nav_slideshow) {
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_about_me) {
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -166,13 +173,13 @@ public class MainActivity extends AppCompatActivity
         Toast.makeText(this, "Position " + position, Toast.LENGTH_LONG).show();
         Intent myIntent = new Intent(MainActivity.this, FullScreenActivity.class);
         myIntent.putExtra("position", position);
-        finish();
+        myIntent.putExtra("string_url", url);
         startActivity(myIntent);
     }
 
 
     @Override
-    public void getAllImage(ArrayList<GridItem> images) {
+    public void getAllImage(ArrayList<Item> images) {
         loadDataToGridView(images);
     }
 }

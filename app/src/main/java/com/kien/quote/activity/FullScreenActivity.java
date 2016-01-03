@@ -6,19 +6,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.view.ViewPager;
-import android.view.View;
 import android.widget.Button;
 
 import com.kien.quote.helper.ConnectionDirector;
-import com.kien.quote.model.GridItem;
 import com.kien.quote.R;
 import com.kien.quote.UtilsImage;
 import com.kien.quote.adapter.FullScreenImageAdapter;
+import com.kien.quote.model.Item;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.util.ArrayList;
 
 public class FullScreenActivity extends Activity implements UtilsImage.getImage {
@@ -27,6 +23,7 @@ public class FullScreenActivity extends Activity implements UtilsImage.getImage 
     private ViewPager viewPaper;
     private UtilsImage allImage;
     private int position;
+    private String url;
     private Boolean isConnectInternet;
     private ConnectionDirector connectionDirector;
     private Button btnClose;
@@ -38,43 +35,24 @@ public class FullScreenActivity extends Activity implements UtilsImage.getImage 
         viewPaper = (ViewPager) findViewById(R.id.pager);
         Intent myIntent = getIntent();
         position = myIntent.getIntExtra("position", 0);
+        url = myIntent.getStringExtra("string_url");
 
         btnClose = (Button) findViewById(R.id.btnClose);
-
-
-        btnClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (android.os.Environment.getExternalStorageState().equals(
-                        Environment.MEDIA_MOUNTED
-                ))
-                {
-                    File sdCard = Environment.getExternalStorageDirectory();
-                    File dir = new File(sdCard.getAbsolutePath()+ "/Pictures");
-                    dir.mkdirs();
-                    File file = new File(dir, "Kien");
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-                }
-
-            }
-        });
 
         connectionDirector = new ConnectionDirector(this);
         isConnectInternet = connectionDirector.isConnectingToInternet();
         if (isConnectInternet){
             allImage = new UtilsImage(this);
             allImage.setListener(this);
-            allImage.getJson();
+            allImage.getJson(url);
         }
         else {
-
             showDialog(this, "Bạn chưa kết nối mạng", "Vui lòng kết nối mạng");
         }
 
     }
 
-    private void loadDataToGridView(ArrayList<GridItem> gridItems) {
+    private void loadDataToGridView(ArrayList<Item> gridItems) {
         adapter = new FullScreenImageAdapter(FullScreenActivity.this, gridItems);
         viewPaper.setAdapter(adapter);
         viewPaper.setCurrentItem(position);
@@ -100,7 +78,8 @@ public class FullScreenActivity extends Activity implements UtilsImage.getImage 
     }
 
     @Override
-    public void getAllImage(ArrayList<GridItem> images) {
+    public void getAllImage(ArrayList<Item> images) {
         loadDataToGridView(images);
     }
+
 }

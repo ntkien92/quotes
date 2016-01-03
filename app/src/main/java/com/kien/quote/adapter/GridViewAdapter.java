@@ -9,7 +9,7 @@ import android.content.Context;
 import android.widget.ImageView;
 
 import com.kien.quote.R;
-import com.kien.quote.model.GridItem;
+import com.kien.quote.model.Item;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -17,13 +17,13 @@ import java.util.ArrayList;
 /**
  * Created by kien on 20/12/2015.
  */
-public class GridViewAdapter extends ArrayAdapter<GridItem> {
+public class GridViewAdapter extends ArrayAdapter<Item> {
     private Context mContext;
     private int layoutResourceId;
-    private ArrayList<GridItem> mGridData = new ArrayList<GridItem>();
+    private ArrayList<Item> mGridData = new ArrayList<Item>();
     private OnClickImage listener;
 
-    public GridViewAdapter(Context mContext, int layoutResourceId, ArrayList<GridItem> mGridData, OnClickImage listener) {
+    public GridViewAdapter(Context mContext, int layoutResourceId, ArrayList<Item> mGridData, OnClickImage listener) {
         super(mContext, layoutResourceId, mGridData);
         this.layoutResourceId = layoutResourceId;
         this.mContext = mContext;
@@ -31,7 +31,7 @@ public class GridViewAdapter extends ArrayAdapter<GridItem> {
         this.listener = listener;
     }
 
-    public void  setGridData(ArrayList<GridItem> mGridData) {
+    public void  setGridData(ArrayList<Item> mGridData) {
         this.mGridData = mGridData;
         notifyDataSetChanged();
     }
@@ -52,8 +52,8 @@ public class GridViewAdapter extends ArrayAdapter<GridItem> {
             holder = (ViewHolder) row.getTag();
         }
 
-        GridItem item = mGridData.get(position);
-        Picasso.with(mContext).load(item.getImage()).into(holder.imageView);
+        Item item = mGridData.get(position);
+        Picasso.with(mContext).load(item.getLink_url()).into(holder.imageView);
         holder.imageView.setOnClickListener(new OnImageClickListener(position));
         return row;
 
@@ -66,9 +66,11 @@ public class GridViewAdapter extends ArrayAdapter<GridItem> {
     }
 
     @Override
-    public GridItem getItem(int position) {
+    public Item getItem(int position) {
         return this.mGridData.get(position);
     }
+
+
 
     @Override
     public long getItemId(int position) {

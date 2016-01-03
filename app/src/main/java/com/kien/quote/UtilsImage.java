@@ -6,12 +6,12 @@ import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.gson.Gson;
 import com.kien.quote.helper.VolleyHelper;
-import com.kien.quote.model.GridItem;
+import com.kien.quote.model.Quote;
+import com.kien.quote.model.Item;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -21,10 +21,7 @@ import java.util.ArrayList;
  */
 public class UtilsImage {
     private Context mContext;
-    private String url = "http://secret-meadow-3565.herokuapp.com/articles.json";
-    private ArrayList<GridItem> allImage = new ArrayList<>();
     private getImage listener;
-    public ArrayList<GridItem> images;
 
     public UtilsImage(Context context) {
         this.mContext = context;
@@ -35,40 +32,30 @@ public class UtilsImage {
     }
 
     public interface getImage{
-        void getAllImage(ArrayList<GridItem> images);
+        void getAllImage(ArrayList<Item> images);
     }
 
-    public void getJson(){
+    public void getJson(String url){
         final ProgressDialog progressDialog = new ProgressDialog(mContext);
         progressDialog.setMessage("Loading...");
         progressDialog.show();
-        JsonArrayRequest req = new JsonArrayRequest(url,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        String link_flickr = "";
-                        try {
-                            for (int i = 0; i < response.length(); i++){
-                                JSONObject jsonObject = (JSONObject) response.get(i);
-                                link_flickr = jsonObject.getString("link_flickr");
-                                GridItem item = new GridItem();
-                                item.setImage(link_flickr);
-                                allImage.add(item);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        progressDialog.hide();
-                        listener.getAllImage(allImage);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url,
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Gson gson = new Gson();
+                    Quote quote = gson.fromJson(response.toString(), Quote.class);
 
+                    ArrayList<Item> items = quote.getItems();
+                    progressDialog.hide();
+                    listener.getAllImage(items);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
 
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("KIENDU", error.getMessage());
-            }
+                }
         });
-        VolleyHelper.getInstance(mContext.getApplicationContext()).addToRequestQueue(req);
+        VolleyHelper.getInstance(mContext.getApplicationContext()).addToRequestQueue(jsonObjectRequest);
     }
 }

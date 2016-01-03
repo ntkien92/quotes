@@ -12,8 +12,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.kien.quote.model.GridItem;
 import com.kien.quote.R;
+import com.kien.quote.model.Item;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -23,10 +23,10 @@ import java.util.ArrayList;
  */
 public class FullScreenImageAdapter extends PagerAdapter {
     private Activity activity;
-    private ArrayList<GridItem> mGridata = new ArrayList<GridItem>();
+    private ArrayList<Item> mGridata = new ArrayList<Item>();
     private LayoutInflater inflater;
 
-    public FullScreenImageAdapter(Activity activity, ArrayList<GridItem> gridata) {
+    public FullScreenImageAdapter(Activity activity, ArrayList<Item> gridata) {
         this.activity = activity;
         this.mGridata = gridata;
     }
@@ -50,9 +50,9 @@ public class FullScreenImageAdapter extends PagerAdapter {
         imgDisplay = (ImageView) viewLayout.findViewById(R.id.imgDisplay);
         btnClose = (Button) viewLayout.findViewById(R.id.btnClose);
 
-        GridItem item = mGridata.get(position);
+        Item item = mGridata.get(position);
 
-        Picasso.with(activity).load(item.getImage()).into(imgDisplay);
+        Picasso.with(activity).load(item.getLink_url()).into(imgDisplay);
 
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
