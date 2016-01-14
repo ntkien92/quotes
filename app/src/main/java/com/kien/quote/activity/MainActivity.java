@@ -5,44 +5,29 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.GridView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.kien.quote.Helper.DatabaseHandler;
 import com.kien.quote.R;
-import com.kien.quote.UtilsImage;
 import com.kien.quote.adapter.GridViewAdapter;
-import com.kien.quote.helper.ConnectionDirector;
 import com.kien.quote.model.Item;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, GridViewAdapter.OnClickImage, UtilsImage.getImage {
+        implements NavigationView.OnNavigationItemSelectedListener, GridViewAdapter.OnClickImage {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
-    private static final String RABBIT = "rabbits";
-    private static final String INSPIRATION = "inspirations";
-    private static final String HOME_PAGE = "http://quote-kien.herokuapp.com/v1";
-    private static final String URL = "http://quote-kien.herokuapp.com/v1/rabbits";
     private GridView mGridView;
-    private ProgressBar mProgressBar;
     private GridViewAdapter mGridAdapter;
-    private UtilsImage allImage;
-    private Boolean isConnectInternet;
-    private ConnectionDirector connectionDirector;
-    public static String url;
+    private static int status = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,15 +35,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -67,28 +43,18 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        url = HOME_PAGE+"/"+INSPIRATION;
-        callGetJson(url);
 
+        loadToGridview(status);
 
     }
 
-    private void loadDataToGridView(ArrayList<Item> gridItems) {
+    public void loadToGridview(int status) {
+        ArrayList<Item> gridItems;
+        DatabaseHandler db = new DatabaseHandler(this);
+        gridItems = db.getAllItems(status);
         mGridView = (GridView) findViewById(R.id.gvImages);
         mGridAdapter = new GridViewAdapter(this, R.layout.grid_item_layout, gridItems, this);
         mGridView.setAdapter(mGridAdapter);
-    }
-
-    public void callGetJson(String url){
-        connectionDirector = new ConnectionDirector(this);
-        isConnectInternet = connectionDirector.isConnectingToInternet();
-
-        if (isConnectInternet) {
-            allImage = new UtilsImage(this);
-            allImage.setListener(this);
-            allImage.getJson(url);
-        }
-        else showDialog(MainActivity.this, "Bạn chưa kết nối mạng", "Vui lòng kết nối mạng");
     }
 
     public void showDialog(final Context context, String title, String message){
@@ -110,20 +76,36 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Cảm ơn bạn đã sử dụng ứng dụng này\n Bạn muốn thoát chứ !!!")
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                                drawer.closeDrawer(GravityCompat.START);
+                            }
+                            else {
+                                finish();
+                            }
+                        Toast.makeText(MainActivity.this, "Chúc bạn một ngày vui vẻ", Toast.LENGTH_LONG).show();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+        // Create the AlertDialog object and return it
+        builder.show();
+
+//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        if (drawer.isDrawerOpen(GravityCompat.START)) {
+//            drawer.closeDrawer(GravityCompat.START);
+//        } else {
+//            super.onBackPressed();
+//        }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -149,15 +131,17 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camara) {
-            url = HOME_PAGE+"/"+RABBIT;
-            callGetJson(url);
+            status = 1;
+            loadToGridview(status);
         } else if (id == R.id.nav_gallery) {
-            url = HOME_PAGE+"/"+INSPIRATION;
-            callGetJson(url);
-        } else if (id == R.id.nav_slideshow) {
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
+            status = 2;
+            loadToGridview(status);
+        }
+//        else if (id == R.id.nav_slideshow) {
+//        } else if (id == R.id.nav_manage) {
+//
+//        }
+        else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_about_me) {
         }
@@ -168,18 +152,12 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+
     @Override
     public void changeToPage(int position) {
-        Toast.makeText(this, "Position " + position, Toast.LENGTH_LONG).show();
         Intent myIntent = new Intent(MainActivity.this, FullScreenActivity.class);
         myIntent.putExtra("position", position);
-        myIntent.putExtra("string_url", url);
+        myIntent.putExtra("status", status);
         startActivity(myIntent);
-    }
-
-
-    @Override
-    public void getAllImage(ArrayList<Item> images) {
-        loadDataToGridView(images);
     }
 }

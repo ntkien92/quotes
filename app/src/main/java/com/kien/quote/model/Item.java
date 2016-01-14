@@ -1,34 +1,48 @@
 package com.kien.quote.model;
 
 /**
- * Created by kien on 03/01/2016.
+ * Created by kien on 03/back/2016.
  */
 public class Item {
-    private String title;
-    private String content;
-    private String link_url;
+    private  int id;
+    private String image;
+    private int type_quote;
 
-    public String getTitle() {
-        return title;
+    public Item(){
+
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public Item(int id, String image, int type_quote) {
+        this.id = id;
+        this.image = image;
+        this.type_quote = type_quote;
     }
 
-    public String getContent() {
-        return content;
+    public Item(String image, int type_quote) {
+        this.image = image;
+        this.type_quote = type_quote;
+    }
+    public String getImage() {
+        return image;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setImage(String image) {
+        this.image = image;
     }
 
-    public String getLink_url() {
-        return link_url;
+    public int getId() {
+        return id;
     }
 
-    public void setLink_url(String link_url) {
-        this.link_url = link_url;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getType_quote() {
+        return type_quote;
+    }
+
+    public void setType_quote(int type_quote) {
+        this.type_quote = type_quote;
     }
 }

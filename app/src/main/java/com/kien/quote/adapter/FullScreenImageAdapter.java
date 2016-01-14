@@ -5,11 +5,13 @@ import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kien.quote.R;
@@ -41,25 +43,16 @@ public class FullScreenImageAdapter extends PagerAdapter {
     }
 
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
+    public Object instantiateItem(ViewGroup container, final int position) {
         ImageView imgDisplay;
-        Button btnClose;
+
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View viewLayout = inflater.inflate(R.layout.layout_fullscreen_image, container, false);
-
         imgDisplay = (ImageView) viewLayout.findViewById(R.id.imgDisplay);
-        btnClose = (Button) viewLayout.findViewById(R.id.btnClose);
 
         Item item = mGridata.get(position);
 
-        Picasso.with(activity).load(item.getLink_url()).into(imgDisplay);
-
-        btnClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(activity, "Close", Toast.LENGTH_LONG).show();
-            }
-        });
+        Picasso.with(activity).load(item.getImage()).into(imgDisplay);
         ((ViewPager) container).addView(viewLayout);
         return viewLayout;
     }

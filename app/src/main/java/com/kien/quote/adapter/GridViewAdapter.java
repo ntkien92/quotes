@@ -53,7 +53,7 @@ public class GridViewAdapter extends ArrayAdapter<Item> {
         }
 
         Item item = mGridData.get(position);
-        Picasso.with(mContext).load(item.getLink_url()).into(holder.imageView);
+        Picasso.with(mContext).load(item.getImage()).into(holder.imageView);
         holder.imageView.setOnClickListener(new OnImageClickListener(position));
         return row;
 

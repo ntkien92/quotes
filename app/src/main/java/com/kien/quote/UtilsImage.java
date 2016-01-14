@@ -3,11 +3,13 @@ package com.kien.quote;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
+import com.kien.quote.Helper.DatabaseHandler;
 import com.kien.quote.helper.VolleyHelper;
 import com.kien.quote.model.Quote;
 import com.kien.quote.model.Item;
@@ -21,23 +23,23 @@ import java.util.ArrayList;
  */
 public class UtilsImage {
     private Context mContext;
-    private getImage listener;
-
     public UtilsImage(Context context) {
         this.mContext = context;
     }
 
-    public void setListener(getImage listener) {
+    public void setListener(OnSuccessDataBase listener) {
         this.listener = listener;
     }
 
-    public interface getImage{
-        void getAllImage(ArrayList<Item> images);
+    private OnSuccessDataBase listener;
+
+    public interface OnSuccessDataBase {
+        void getAllImage(ArrayList<Item> items);
     }
 
     public void getJson(String url){
         final ProgressDialog progressDialog = new ProgressDialog(mContext);
-        progressDialog.setMessage("Loading...");
+        progressDialog.setMessage("Đang tải dữ liệu..\nXin lỗi vì đã để bạn chờ lâu..");
         progressDialog.show();
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url,
             new Response.Listener<JSONObject>() {
@@ -47,8 +49,9 @@ public class UtilsImage {
                     Quote quote = gson.fromJson(response.toString(), Quote.class);
 
                     ArrayList<Item> items = quote.getItems();
-                    progressDialog.hide();
                     listener.getAllImage(items);
+//                    Toast.makeText(mContext.getApplicationContext(), "" + total_page, Toast.LENGTH_LONG).show();
+                    progressDialog.hide();
                 }
             }, new Response.ErrorListener() {
                 @Override
