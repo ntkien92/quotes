@@ -27,7 +27,11 @@ public class MainActivity extends AppCompatActivity
 
     private GridView mGridView;
     private GridViewAdapter mGridAdapter;
-    private static int status = 1;
+    private static final int RABBIT_COLOR = 1;
+    private static final int INSPRISION = 2;
+    private static final int IFACT = 3;
+    private static final int OTHER = 4;
+    private static int status = INSPRISION;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +47,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
 
         loadToGridview(status);
 
@@ -131,19 +137,24 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camara) {
-            status = 1;
+            status = RABBIT_COLOR;
             loadToGridview(status);
         } else if (id == R.id.nav_gallery) {
-            status = 2;
+            status = INSPRISION;
             loadToGridview(status);
         }
-//        else if (id == R.id.nav_slideshow) {
-//        } else if (id == R.id.nav_manage) {
-//
-//        }
+        else if (id == R.id.nav_ifact) {
+            status = IFACT;
+            loadToGridview(status);
+        }
+        else if (id == R.id.nav_other) {
+            status = OTHER;
+            loadToGridview(status);
+        }
         else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_about_me) {
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -5,7 +5,7 @@
     android:background="@color/backgroundImage">
 
 
-    <android.support.v4.view.ViewPager
+    <com.kien.quote.HackyViewPager.HackyViewPager
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/pager"

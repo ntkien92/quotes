@@ -20,6 +20,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import uk.co.senab.photoview.PhotoView;
+
 /**
  * Created by kien on 22/12/2015.
  */
@@ -44,11 +46,11 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
-        ImageView imgDisplay;
+        PhotoView imgDisplay;
 
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View viewLayout = inflater.inflate(R.layout.layout_fullscreen_image, container, false);
-        imgDisplay = (ImageView) viewLayout.findViewById(R.id.imgDisplay);
+        imgDisplay = (PhotoView) viewLayout.findViewById(R.id.imgDisplay);
 
         Item item = mGridata.get(position);
 

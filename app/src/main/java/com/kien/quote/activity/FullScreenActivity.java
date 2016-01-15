@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.kien.quote.HackyViewPager.HackyViewPager;
 import com.kien.quote.Helper.DatabaseHandler;
 import com.kien.quote.helper.ConnectionDirector;
 import com.kien.quote.R;
@@ -27,18 +28,16 @@ public class FullScreenActivity extends Activity {
     private int status;
     private Boolean isConnectInternet;
     private ConnectionDirector connectionDirector;
-    private ImageView imgDisplay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fullscreen_view);
-        viewPaper = (ViewPager) findViewById(R.id.pager);
+        viewPaper = (HackyViewPager) findViewById(R.id.pager);
         Intent myIntent = getIntent();
         position = myIntent.getIntExtra("position", 0);
         status = myIntent.getIntExtra("status", 1);
 
-        imgDisplay = (ImageView) findViewById(R.id.imgDisplay);
 
         connectionDirector = new ConnectionDirector(this);
         isConnectInternet = connectionDirector.isConnectingToInternet();
@@ -129,14 +128,15 @@ public class FullScreenActivity extends Activity {
                 case DEPTH:
                     if (position > 0 && position < 1) {
                         // moving to the right
-                        alpha = (1 - position);
-                        scale = MIN_SCALE_DEPTH + (1 - MIN_SCALE_DEPTH) * (1 - Math.abs(position));
-                        translationX = (page.getWidth() * -position);
-                    } else {
-                        // use default for all other cases
                         alpha = 1;
                         scale = 1;
                         translationX = 0;
+                    } else {
+                        // use default for all other cases
+
+                        alpha = (1 - position);
+                        scale = MIN_SCALE_DEPTH + (1 - MIN_SCALE_DEPTH) * (1 - Math.abs(position));
+                        translationX = (page.getWidth() * -position);
                     }
                     break;
 
